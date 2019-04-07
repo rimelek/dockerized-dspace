@@ -1,0 +1,9 @@
+/.idea
+/src
+/.env
+/docker-compose.*
+!/docker-compose.*.dist.yml
+!/docker-compose.yml
+/libs
+*.iml
+/system/config.sh
