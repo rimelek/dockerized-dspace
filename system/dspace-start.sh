@@ -12,7 +12,7 @@ source resources.sh
 
 CUSTOM_COMMAND=$@
 
-REQUIRED_VARIABLES="config.db.password config.mail.server config.mail.server.username config.mail.server.password"
+REQUIRED_VARIABLES="config.db.password"
 
 CFG_DSPACE=/dspace/config/local.cfg
 CFG_DSPACE=/dspace/config/local.cfg
