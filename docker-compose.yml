@@ -1,0 +1,97 @@
+version: "3.4"
+
+volumes:
+  pgdata:
+  solr-authority-data:
+  solr-search-data:
+  solr-statistics-data:
+  solr-oai-data:
+  assetstore:
+
+services:
+  xmlui:
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+    depends_on:
+      - db
+      - solr
+      - mailer
+    volumes:
+      - assetstore:/dspace/assetstore
+    environment: &xmluienv
+      JAVA_OPTS: "-Xmx256m"
+      DS_DB_HOST: db
+      DS_DB_USER: ${DS_DB_USER:-dspace}
+      DS_DB_PASSWORD: ${DS_DB_PASSWORD:-password}
+      ## Line by line list of hidden metadata without "metadata.hide." at the beginning and " = true" at the end.
+      # DS_HIDDEN_METADATA: |
+      #   schema.element.qualifier1
+      #   schema.element.qualifier2
+      ## For NGINX proxy
+      VIRTUAL_HOST: ${DSPACE_HOSTNAME:-dspace}
+      config.dspace.hostname: ${DSPACE_HOSTNAME:-dspace}
+      ## Uncomment it to override the whole db connection string
+      # config.db.url: jdbc:postgresql://db:5432/dspace
+      config.db.username: dspace
+      config.db.password: ${DS_DB_PASSWORD:-password}
+      config.mail.server: mailer
+      # config.mail.server.username: smtpuser
+      # config.mail.server.password: smtppassword
+      config.handle.prefix: dspace
+      config.handle.canonical.prefix: "$${dspace.url}/handle/"
+      # config.webui.submission.restrictstep.groups: SubmissionAdmin
+      # config.webui.submission.restrictstep.enableAdvancedForm: "true"
+      config.swordv2-server.url: http://swordv2.${DSPACE_HOSTNAME}:8080/swordv2
+  solr:
+    depends_on:
+      - db
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+        APP_NAME: solr
+    volumes:
+      - assetstore:/dspace/assetstore
+      - solr-authority-data:/dspace/solr/authority/data
+      - solr-search-data:/dspace/solr/search/data
+      - solr-statistics-data:/dspace/solr/statistics/data
+    environment:
+      <<: *xmluienv
+      VIRTUAL_HOST: solr.${DSPACE_HOSTNAME}
+  oai:
+    depends_on:
+      - solr
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+        APP_NAME: oai
+    volumes:
+      - solr-oai-data:/dspace/solr/oai/data
+    environment:
+      <<: *xmluienv
+      VIRTUAL_HOST: oai.${DSPACE_HOSTNAME}
+  swordv2:
+    depends_on:
+      - xmlui
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+        APP_NAME: swordv2
+    environment:
+      <<: *xmluienv
+      VIRTUAL_HOST: swordv2.${DSPACE_HOSTNAME}
+  db:
+    image: postgres:10.5-alpine
+    environment:
+      VIRTUAL_HOST: db.${DSPACE_HOSTNAME}
+      POSTGRES_PASSWORD: ${DB_DEFAULT_SYS_PASS:-password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  mailer:
+    image: mailhog/mailhog
+    environment:
+      VIRTUAL_HOST: mailer.${DSPACE_HOSTNAME}
