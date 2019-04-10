@@ -108,7 +108,7 @@ RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
     done
 
 ENV DS_PORT="8080" \
-    DS_DB_HOST="database" \
+    DS_DB_HOST="db" \
     DS_DB_PORT="5432" \
     DS_DB_SERVICE_NAME="dspace" \
     DS_LOGLEVEL_OTHER="WARN" \
