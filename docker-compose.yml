@@ -37,7 +37,7 @@ services:
       # config.db.url: jdbc:postgresql://db:5432/dspace
       config.db.username: dspace
       config.db.password: ${DS_DB_PASSWORD:-password}
-      config.mail.server: mailer
+      config.mail.server: mailer:1025
       # config.mail.server.username: smtpuser
       # config.mail.server.password: smtppassword
       config.handle.prefix: dspace
