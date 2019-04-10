@@ -69,13 +69,21 @@ RUN mkdir /dspace-webapps \
 
 FROM tomcat:8.5-jre8-alpine as app
 
-RUN rm -rf ${CATALINA_HOME}/webapps
+
+ARG REDISSON_VERSION=3.10.6
+
+RUN rm -rf ${CATALINA_HOME}/webapps \
+ && wget "https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/redisson/redisson-all/${REDISSON_VERSION}/redisson-all-${REDISSON_VERSION}.jar" \
+        -O "${CATALINA_HOME}/lib/redisson-all-${REDISSON_VERSION}.jar" \
+ && wget "https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/redisson/redisson-tomcat-8/${REDISSON_VERSION}/redisson-tomcat-8-${REDISSON_VERSION}.jar" \
+        -O "${CATALINA_HOME}/lib/redisson-tomcat-8-${REDISSON_VERSION}.jar"
 
 COPY --from=builder /dspace /dspace
 COPY --from=builder /dspace-webapps ${CATALINA_HOME}/webapps
 COPY system /
 COPY dspace /dspace
 COPY tomcat-solr /tmp/tomcat-solr
+COPY tomcat-xmlui /tmp/tomcat-xmlui
 
 ARG APP_NAME=xmlui
 ARG APP_ROOT=xmlui
