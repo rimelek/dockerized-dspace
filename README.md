@@ -50,7 +50,7 @@ You have three options:
 Each container has an IP address. Inspect the containers and get the addresses:
 
 ```bash
-APP=xmlui docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{$value.IPAddress}}{{end}}' $(docker-compose ps -q ${APP};
+APP=xmlui docker inspect -f '{{range $key, $value := .NetworkSettings.Networks}}{{$value.IPAddress}}{{end}}' $(docker-compose ps -q ${APP}
 # output: 172.20.0.2
 ``` 
 
@@ -106,4 +106,32 @@ In this case the following addresses can be used:
 
 ## Custom configuration
 
-Coming soon...
+There are environment variables to customize configurations like database connection and URL-s:
+
+* **DS_PORT:** (default: 8080) Public port of the XMLUI webinterface.
+* **DS_DB_HOST:** (default: "db") The host of the postgresql database server 
+* **DS_DB_PORT:** (default: 5432) The port of the postgresql database server
+* **DS_DB_SERVICE_NAME:** (default: "dspace") The name of the postgresql database
+* **DS_LOGLEVEL_OTHER:** (default: "WARN") Value of loglevel.other in log4j.properties
+* **DS_LOGLEVEL_DSPACE:** (default: "WARN") Value of loglevel.dspace in log4j.properties
+* **DS_PROTOCOL:** (default: "http") Protocol of the XMLUI. https or http \
+* **DS_SOLR_HOSTNAME:** (default: "solr") Internal hostname of solr server. It will always use http protocol.
+* **DS_CUSTOM_CONFIG:** (default: "") It is a multiline string for custom configurations that you could use in dspace.cfg
+
+Any configuration directive can be set using environment variables prefixed by "config.".
+
+Example:
+
+```yaml
+xmlui:
+  environment:
+    config.dspace.url: https://mydspace.tld:8080
+```
+
+The following are set by default in each docker image:
+
+* **config.dspace.ui:** "xmlui"
+* **config.dspace.url:** "${dspace.baseUrl}"
+* **config.handle.canonical.prefix:** "${dspace.url}/handle/"
+* **config.swordv2-server.url:** "${dspace.url}/swordv2"
+* **config.swordv2-server.servicedocument.url:** "${swordv2-server.url}/servicedocument"
