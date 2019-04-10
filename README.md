@@ -32,7 +32,7 @@ docker-compose exec --user postgres db psql dspace -c 'create extension pgcrypto
 The database will be installed automatically when xmlui starts. Now you need to create an administrator:
 
 ```bash
-docker-compose exec xmlui ./dspace create-administrator
+docker-compose exec xmlui /dspace/bin/dspace create-administrator
 ```
 
 ### Access the XMLUI
