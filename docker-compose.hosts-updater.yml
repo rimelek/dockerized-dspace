@@ -1,0 +1,41 @@
+version: "3.4"
+
+# Use this to update /etc/hosts whenever you start or stop a container which has the environment variable: VIRTUAL_HOST
+
+# IMPORTANT: It works only on linux systems.
+#   Create a copy of your hosts file:
+#   sudo cp /etc/hosts /etc/hosts.docker.tpl
+
+volumes:
+  hosts:
+
+services:
+  xmlui:
+    depends_on:
+      - hosts-updater
+  oai:
+    depends_on:
+      - hosts-updater
+  solr:
+    depends_on:
+      - hosts-updater
+  mailer:
+    depends_on:
+      - hosts-updater
+  hosts-updater:
+    image: itsziget/hosts-updater:v1.0.0
+    container_name: dspace-hosts-updater
+    volumes:
+      - /etc/hosts:/hosts/orig
+      - /etc/hosts.docker.tpl:/hosts/tpl:ro
+      - hosts:/hosts
+    depends_on:
+      - hosts-gen
+  hosts-gen:
+    image: itsziget/hosts-gen:v1.0.0
+    container_name: dspace-hosts-gen
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - hosts:/hosts
+    environment:
+      UPDATER_CONTAINER: dspace-hosts-updater

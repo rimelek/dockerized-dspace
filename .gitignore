@@ -4,6 +4,8 @@
 /docker-compose.*
 !/docker-compose.*.dist.yml
 !/docker-compose.yml
+!/docker-compose.hosts-updater.yml
+!/docker-compose.portmap.yml
 /libs
 *.iml
 /system/config.sh
