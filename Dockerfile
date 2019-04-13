@@ -105,7 +105,8 @@ RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
        if [ -f "${i}" ]; then \
           mv "${i}" "${i}.tpl"; \
        fi; \
-    done
+    done \
+ && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' '/dspace/config/xmlui.xconf'
 
 ENV DS_PORT="8080" \
     DS_DB_HOST="db" \
