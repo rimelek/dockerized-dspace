@@ -2,6 +2,7 @@ version: "3.4"
 
 volumes:
   pgdata:
+  pgadmindata:
   solr-authority-data:
   solr-search-data:
   solr-statistics-data:
@@ -98,3 +99,13 @@ services:
       VIRTUAL_HOST: mailer.${DSPACE_HOSTNAME}
   redis:
     image: redis:5.0-alpine
+  pgadmin:
+    image: dpage/pgadmin4:4.5
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local
+      PGADMIN_DEFAULT_PASSWORD: ${DB_DEFAULT_SYS_PASS:-password}
+      VIRTUAL_HOST: pgadmin.${DSPACE_HOSTNAME}
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    depends_on:
+      - db

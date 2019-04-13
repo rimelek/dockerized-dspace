@@ -22,6 +22,9 @@ services:
   mailer:
     depends_on:
       - hosts-updater
+  pgadmin:
+    depends_on:
+      - hosts-updater
   hosts-updater:
     image: itsziget/hosts-updater:v1.0.0
     container_name: dspace-hosts-updater

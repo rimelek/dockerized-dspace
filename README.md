@@ -60,6 +60,7 @@ Examples:
 * **oai:** 172.20.0.3:8080/oai
 * **solr:** 172.20.0.4:8080/solr
 * **mailer:** 172.20.0.5:8025
+* **pgadmin:** 172.20.0.6
 
 Note that the IP addresses can be changed so it is not the recommended way.
 
@@ -83,6 +84,7 @@ Default hosts:
 * **oai:** oai.dspace:8080/oai
 * **solr:** solr.dspace:8080/solr
 * **mailer:** mailer.dspace:8025
+* **pgadmin:** pgadmin.dspace
 
 **3. proxy**
 
@@ -103,6 +105,7 @@ In this case the following addresses can be used:
 * **oai:** 127.0.10.2:8080/oai
 * **solr:** 127.0.10.3:8080/solr
 * **mailer:** 127.0.0.4:8025
+* **pgadmin:** 127.0.0.5
 
 ## Custom configuration
 

@@ -13,3 +13,6 @@ services:
   mailer:
     ports:
       - 127.0.10.4:8025:8025
+  pgadmin:
+    ports:
+      - 127.0.10.5:80:80
