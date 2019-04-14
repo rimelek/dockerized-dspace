@@ -2,6 +2,6 @@
 <Context>
 
     <Manager className="org.redisson.tomcat.RedissonSessionManager"
-             configPath="${catalina.base}/webapps/xmlui/WEB-INF/redisson.yaml" />
+             configPath="${catalina.base}/webapps/xmlui/WEB-INF/redisson.yaml" updateMode="AFTER_REQUEST" />
 
 </Context>
