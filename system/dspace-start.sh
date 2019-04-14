@@ -20,6 +20,7 @@ CFG_LOGPROP=/dspace/config/log4j.properties
 CFG_DSC_CROSSWALKS_OAI=/dspace/config/crosswalks/oai/description.xml
 CFG_DSC=/dspace/config/description.xml
 CFG_ROBOTS="${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt"
+CFG_ITEM_SUBMISSION="/dspace/config/item-submission.xml"
 
 for i in ${REQUIRED_VARIABLES}; do
     if [[ -z "$(getenv "${i}")" ]]; then
@@ -104,6 +105,11 @@ if [[ -f "${CFG_ROBOTS}" ]]; then
     URL="${DS_PROTOCOL}://$(getenv "config.dspace.hostname")${DS_PORT_SUFFIX}"
     sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
 fi;
+
+sed -i 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
+
+env | grep '^submission-map\.' | sort | awk '{print gensub(/^submission-map\.([^=]+)=(.*)/, "<name-map submission-name=\"\\1\" collection-handle=\"\\2\" />", "G")}' \
+    | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
 
 cd /dspace/bin/
 

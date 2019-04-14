@@ -100,6 +100,7 @@ RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
  && echo "/dspace/config/log4j.properties" >> /templatize.txt \
  && echo "/dspace/config/crosswalks/oai/description.xml" >> /templatize.txt \
  && echo "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" >> /templatize.txt \
+ && echo "/dspace/config/item-submission.xml" >> /templatize.txt \
  && IFS=$'\r\n' \
  && for i in $(cat /templatize.txt); do \
        if [ -f "${i}" ]; then \
@@ -124,6 +125,7 @@ ENV config.dspace.ui="xmlui" \
     config.swordv2-server.url="\${dspace.url}/swordv2" \
     config.swordv2-server.servicedocument.url="\${swordv2-server.url}/servicedocument"
 
+ENV submission-map.traditional="default"
 
 ARG GIT_COMMIT=""
 
