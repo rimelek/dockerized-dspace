@@ -100,3 +100,41 @@ waitForDatabase() {
         sleep 2
     done;
 }
+
+exitWithMessage() {
+    >&2 echo "${1}" && exit ${2};
+}
+
+sedAndSave() {
+    sed -i "${1}" "${2}" || exitWithMessage  "sed FAILED: sed -i \"${1}\" \"${2}\"" $?
+}
+
+renderLocalConfig() {
+    removeOverriddenConfigs
+
+    if [[ "${DS_PORT}" != "" ]]; then
+        DS_PORT_SUFFIX=":${DS_PORT}"
+    fi;
+
+    for i in DB_HOST DB_PORT DB_SERVICE_NAME PROTOCOL PORT_SUFFIX; do
+        local VAR="DS_${i}"
+        sedAndSave "s/{{$i}}/${!VAR}/g" "${CFG_DSPACE}"
+    done;
+
+    echo "# generated configurations" >> "${CFG_DSPACE}"
+    if [[ ! -z "${DS_HIDDEN_METADATA}" ]]; then
+        IFS=$', \n\r'
+        for i in ${DS_HIDDEN_METADATA}; do
+            echo "metadata.hide.${i} = true" >> "${CFG_DSPACE}"
+        done;
+    fi;
+
+    if [[ ! -z "${DS_CUSTOM_CONFIG}" ]]; then
+        IFS=$'\n\r'
+        for i in ${DS_CUSTOM_CONFIG}; do
+            echo "${i}" >> "${CFG_DSPACE}"
+        done;
+    fi;
+
+    getConfigMap >> "${CFG_DSPACE}"
+}
