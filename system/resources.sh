@@ -65,6 +65,13 @@ renderFormMap() {
     formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
 }
 
+renderRobotsTxt() {
+    if [[ -f "${CFG_ROBOTS}" ]]; then
+        URL="${DS_PROTOCOL}://$(getenv "config.dspace.hostname")${DS_PORT_SUFFIX}"
+        sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
+    fi;
+}
+
 waitForDatabase() {
     until /dspace/bin/dspace database test;
     do

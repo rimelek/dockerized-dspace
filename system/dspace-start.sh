@@ -86,11 +86,7 @@ fi;
 sed -i "s/localhost/$(getenv "config.dspace.hostname")/g" "${CFG_DSC_CROSSWALKS_OAI}"
 sed -i "s/123456789/$(getenv "config.handle.prefix")/g" "${CFG_DSC_CROSSWALKS_OAI}"
 
-if [[ -f "${CFG_ROBOTS}" ]]; then
-    URL="${DS_PROTOCOL}://$(getenv "config.dspace.hostname")${DS_PORT_SUFFIX}"
-    sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
-fi;
-
+renderRobotsTxt
 renderSubmissionMap
 renderFormMap
 waitForDatabase
