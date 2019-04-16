@@ -42,18 +42,21 @@ checkRequiredEnv() {
 }
 
 templatize() {
-    echo "/dspace/config/local.cfg" >> /templatize.txt \
- && echo "/dspace/config/log4j.properties" >> /templatize.txt \
- && echo "/dspace/config/crosswalks/oai/description.xml" >> /templatize.txt \
- && echo "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" >> /templatize.txt \
- && echo "/dspace/config/item-submission.xml" >> /templatize.txt \
- && echo "/dspace/config/input-forms.xml" >> /templatize.txt \
- && IFS=$'\r\n' \
- && for i in $(cat /templatize.txt); do \
-       if [[ -f "${i}" ]] && [[ ! -f "${i}.tpl" ]]; then \
-          mv "${i}" "${i}.tpl"; \
-       fi; \
-    done \
+    local SRC=
+    for SRC in "/dspace/config/local.cfg" \
+             "/dspace/config/log4j.properties" \
+             "/dspace/config/crosswalks/oai/description.xml" \
+             "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" \
+             "/dspace/config/item-submission.xml" \
+             "/dspace/config/input-forms.xml" \
+             ; do
+        local DST="/app/templates${SRC}.tpl"
+        local DST_DIR="$(dirname "${DST}")";
+        if [[ -f "${SRC}" ]] && [[ ! -f "${DST}" ]]; then
+            mkdir -p "${DST_DIR}"
+            mv "${SRC}" "${DST}";
+        fi;
+    done
 }
 
 submissionMapToXml() {
@@ -94,7 +97,6 @@ renderOAIDescription() {
 
 renderLogConfig() {
     if [[ ! -z "${CFG_LOGPROP}" ]]; then
-        cp "${CFG_LOGPROP}.tpl" "${CFG_LOGPROP}"
         sed -i "s/loglevel\.other=INFO/loglevel.other=${DS_LOGLEVEL_OTHER^^}/g" "${CFG_LOGPROP}"
         sed -i "s/loglevel\.dspace=INFO/loglevel.dspace=${DS_LOGLEVEL_DSPACE^^}/g" "${CFG_LOGPROP}"
     fi;
@@ -155,12 +157,10 @@ renderLocalConfig() {
 }
 
 renderTemplates() {
-    cd /dspace/config
 
-    for file in $(cat /templatize.txt); do
-        if [[ -f "${file}.tpl" ]]; then
-            cp "${file}.tpl" "${file}"
-        fi;
+    local file=""
+    for file in $(find /app/templates -type f -name *.tpl); do
+        cp "${file}" "${file:14:-4}"
     done;
 
     renderLocalConfig

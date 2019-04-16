@@ -95,8 +95,8 @@ RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
  && if [ -d "/tmp/tomcat-${APP_NAME}" ]; then \
         cp -R /tmp/tomcat-${APP_NAME}/. /usr/local/tomcat/. && rm -rf /tmp/tomcat-${APP_NAME}; \
     fi \
- && chmod +x /dspace-start.sh /cron.sh \
- && source /resources.sh \
+ && chmod +x -R /app/bin/*.sh \
+ && source /app/bin/resources.sh \
  && templatize \
  && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' '/dspace/config/xmlui.xconf'
 
@@ -126,4 +126,4 @@ ENV GIT_COMMIT=$GIT_COMMIT
 
 RUN if [ -z "${GIT_COMMIT}" ]; then >&2 echo "Missing build argument: GIT_COMMIT"; exit 1; fi;
 
-ENTRYPOINT ["/dspace-start.sh"]
+ENTRYPOINT ["/app/bin/dspace-start.sh"]

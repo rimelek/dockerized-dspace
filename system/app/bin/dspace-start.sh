@@ -3,10 +3,13 @@
 set -e
 
 if [[ -z "$@" ]]; then
-    source /resources.sh
+    WORKDIR="$(pwd)"
 
+    cd /app/bin
+    source resources.sh
     prepareDSpaceApp
 
+    cd "${WORKDIR}"
     exec catalina.sh run
 else
     exec $@
