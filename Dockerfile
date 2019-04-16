@@ -97,17 +97,8 @@ RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
         cp -R /tmp/tomcat-${APP_NAME}/. /usr/local/tomcat/. && rm -rf /tmp/tomcat-${APP_NAME}; \
     fi \
  && chmod +x /dspace-start.sh /cron.sh \
- && echo "/dspace/config/log4j.properties" >> /templatize.txt \
- && echo "/dspace/config/crosswalks/oai/description.xml" >> /templatize.txt \
- && echo "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" >> /templatize.txt \
- && echo "/dspace/config/item-submission.xml" >> /templatize.txt \
- && echo "/dspace/config/input-forms.xml" >> /templatize.txt \
- && IFS=$'\r\n' \
- && for i in $(cat /templatize.txt); do \
-       if [ -f "${i}" ]; then \
-          mv "${i}" "${i}.tpl"; \
-       fi; \
-    done \
+ && source /resources.sh \
+ && templatize \
  && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' '/dspace/config/xmlui.xconf'
 
 ENV DS_PORT="8080" \

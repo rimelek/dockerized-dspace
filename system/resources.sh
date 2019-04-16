@@ -41,6 +41,21 @@ checkRequiredEnv() {
     done;
 }
 
+templatize() {
+    echo "/dspace/config/local.cfg" >> /templatize.txt \
+ && echo "/dspace/config/log4j.properties" >> /templatize.txt \
+ && echo "/dspace/config/crosswalks/oai/description.xml" >> /templatize.txt \
+ && echo "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" >> /templatize.txt \
+ && echo "/dspace/config/item-submission.xml" >> /templatize.txt \
+ && echo "/dspace/config/input-forms.xml" >> /templatize.txt \
+ && IFS=$'\r\n' \
+ && for i in $(cat /templatize.txt); do \
+       if [[ -f "${i}" ]] && [[ ! -f "${i}.tpl" ]]; then \
+          mv "${i}" "${i}.tpl"; \
+       fi; \
+    done \
+}
+
 submissionMapToXml() {
     env | grep '^submission-map\.' \
         | sort \
@@ -137,4 +152,19 @@ renderLocalConfig() {
     fi;
 
     getConfigMap >> "${CFG_DSPACE}"
+}
+
+renderTemplates() {
+    for file in $(cat /templatize.txt); do
+        if [[ -f "${file}.tpl" ]]; then
+            cp "${file}.tpl" "${file}"
+        fi;
+    done;
+
+    renderLocalConfig
+    renderLogConfig
+    renderOAIDescription
+    renderRobotsTxt
+    renderSubmissionMap
+    renderFormMap
 }
