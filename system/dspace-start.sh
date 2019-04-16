@@ -91,11 +91,8 @@ if [[ -f "${CFG_ROBOTS}" ]]; then
     sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
 fi;
 
-sed -i 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
-submissionMapToXml | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
-
-sed -i 's~<name-map.*/>~~' "${CFG_FORMS}"
-formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
+renderSubmissionMap
+renderFormMap
 
 cd /dspace/bin/
 

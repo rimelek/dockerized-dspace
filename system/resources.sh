@@ -54,3 +54,13 @@ formMapToXml() {
         | awk '{print gensub(/^form-map\.([^\.]+)\.([^=]+)=(.*)/, "<name-map form-name=\"\\3\" collection-handle=\"\\1/\\2\" />", "G")}' \
         | awk '{print gensub(/^form-map\.default=traditional/, "<name-map form-name=\"traditional\" collection-handle=\"default\" />", "G")}'
 }
+
+renderSubmissionMap() {
+    sed -i 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
+    submissionMapToXml | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
+}
+
+renderFormMap() {
+    sed -i 's~<name-map.*/>~~' "${CFG_FORMS}"
+    formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
+}
