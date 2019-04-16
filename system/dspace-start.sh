@@ -93,14 +93,7 @@ fi;
 
 renderSubmissionMap
 renderFormMap
-
-cd /dspace/bin/
-
-until ./dspace database test;
-do
-    echo "Waiting for database... [$(date)]";
-    sleep 2
-done;
+waitForDatabase
 
 cd "${WORKING_DIR}"
 if [[ -z "${CUSTOM_COMMAND}" ]]; then

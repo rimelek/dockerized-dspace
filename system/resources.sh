@@ -64,3 +64,11 @@ renderFormMap() {
     sed -i 's~<name-map.*/>~~' "${CFG_FORMS}"
     formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
 }
+
+waitForDatabase() {
+    until /dspace/bin/dspace database test;
+    do
+        echo "Waiting for database... [$(date)]";
+        sleep 2
+    done;
+}
