@@ -81,7 +81,6 @@ RUN rm -rf ${CATALINA_HOME}/webapps \
 COPY --from=builder /dspace /dspace
 COPY --from=builder /dspace-webapps ${CATALINA_HOME}/webapps
 COPY system /
-COPY dspace /dspace
 COPY tomcat-solr /tmp/tomcat-solr
 COPY tomcat-xmlui /tmp/tomcat-xmlui
 
