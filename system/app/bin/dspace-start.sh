@@ -7,7 +7,10 @@ if [[ -z "$@" ]]; then
 
     cd /app/bin
     source resources.sh
+
+    [[ -f "custom/beforePrepare.sh" ]] && custom/beforePrepare.sh
     prepareDSpaceApp
+    [[ -f "custom/afterPrepare.sh" ]] && custom/afterPrepare.sh
 
     cd "${WORKDIR}"
     exec catalina.sh run
