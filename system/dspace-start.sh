@@ -12,23 +12,7 @@ source resources.sh
 
 CUSTOM_COMMAND=$@
 
-REQUIRED_VARIABLES="config.db.password"
-
-CFG_DSPACE=/dspace/config/local.cfg
-CFG_DSPACE=/dspace/config/local.cfg
-CFG_LOGPROP=/dspace/config/log4j.properties
-CFG_DSC_CROSSWALKS_OAI=/dspace/config/crosswalks/oai/description.xml
-CFG_DSC=/dspace/config/description.xml
-CFG_ROBOTS="${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt"
-CFG_ITEM_SUBMISSION="/dspace/config/item-submission.xml"
-CFG_FORMS="/dspace/config/input-forms.xml"
-
-for i in ${REQUIRED_VARIABLES}; do
-    if [[ -z "$(getenv "${i}")" ]]; then
-        >&2 echo "Variable ${i} is required!";
-        exit 1;
-    fi;
-done;
+checkRequiredEnv || exit $?
 
 if [[ "${DS_PORT}" != "" ]]; then
     DS_PORT_SUFFIX=":${DS_PORT}"
