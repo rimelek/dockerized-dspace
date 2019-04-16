@@ -72,6 +72,19 @@ renderRobotsTxt() {
     fi;
 }
 
+renderOAIDescription() {
+    sed -i "s/localhost/$(getenv "config.dspace.hostname")/g" "${CFG_DSC_CROSSWALKS_OAI}"
+    sed -i "s/123456789/$(getenv "config.handle.prefix")/g" "${CFG_DSC_CROSSWALKS_OAI}"
+}
+
+renderLogConfig() {
+    if [[ ! -z "${CFG_LOGPROP}" ]]; then
+        cp "${CFG_LOGPROP}.tpl" "${CFG_LOGPROP}"
+        sed -i "s/loglevel\.other=INFO/loglevel.other=${DS_LOGLEVEL_OTHER^^}/g" "${CFG_LOGPROP}"
+        sed -i "s/loglevel\.dspace=INFO/loglevel.dspace=${DS_LOGLEVEL_DSPACE^^}/g" "${CFG_LOGPROP}"
+    fi;
+}
+
 waitForDatabase() {
     until /dspace/bin/dspace database test;
     do
