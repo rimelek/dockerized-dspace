@@ -37,11 +37,7 @@ for file in $(cat /templatize.txt); do
     fi;
 done;
 
-for i in "dspace.baseUrl" "solr.server" "db.url"; do
-    if [[ -n "$(getenv "config.${i}")" ]]; then
-        sed -i 's/^'${i/\./\\.}'\(=\| \).*//g' "${CFG_DSPACE}"
-    fi;
-done;
+removeOverriddenConfigs
 
 for i in ${!DIRECTIVES[@]}; do
     TMP_FILE=$(mktemp)

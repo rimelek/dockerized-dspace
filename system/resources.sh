@@ -85,6 +85,14 @@ renderLogConfig() {
     fi;
 }
 
+removeOverriddenConfigs() {
+    for i in "dspace.baseUrl" "solr.server" "db.url"; do
+        if [[ -n "$(getenv "config.${i}")" ]]; then
+            sed -i 's/^'${i/\./\\.}'\(=\| \).*//g' "${CFG_DSPACE}"
+        fi;
+    done;
+}
+
 waitForDatabase() {
     until /dspace/bin/dspace database test;
     do
