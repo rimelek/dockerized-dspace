@@ -40,3 +40,17 @@ checkRequiredEnv() {
         fi;
     done;
 }
+
+submissionMapToXml() {
+    env | grep '^submission-map\.' \
+        | sort \
+        | awk '{print gensub(/^submission-map\.([^\.]+)\.([^=]+)=(.*)/, "<name-map submission-name=\"\\3\" collection-handle=\"\\1/\\2\" />", "G")}' \
+        | awk '{print gensub(/^submission-map\.default=traditional/, "<name-map submission-name=\"traditional\" collection-handle=\"default\" />", "G")}'
+}
+
+formMapToXml() {
+    env | grep '^form-map\.' \
+        | sort \
+        | awk '{print gensub(/^form-map\.([^\.]+)\.([^=]+)=(.*)/, "<name-map form-name=\"\\3\" collection-handle=\"\\1/\\2\" />", "G")}' \
+        | awk '{print gensub(/^form-map\.default=traditional/, "<name-map form-name=\"traditional\" collection-handle=\"default\" />", "G")}'
+}

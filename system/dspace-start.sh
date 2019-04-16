@@ -92,14 +92,10 @@ if [[ -f "${CFG_ROBOTS}" ]]; then
 fi;
 
 sed -i 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
-
-env | grep '^submission-map\.' | sort | awk '{print gensub(/^submission-map\.([^=]+)=(.*)/, "<name-map submission-name=\"\\1\" collection-handle=\"\\2\" />", "G")}' \
-    | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
+submissionMapToXml | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
 
 sed -i 's~<name-map.*/>~~' "${CFG_FORMS}"
-
-env | grep '^form-map\.' | sort | awk '{print gensub(/^form-map\.([^=]+)=(.*)/, "<name-map form-name=\"\\1\" collection-handle=\"\\2\" />", "G")}' \
-    | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
+formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
 
 cd /dspace/bin/
 
