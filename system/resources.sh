@@ -155,6 +155,8 @@ renderLocalConfig() {
 }
 
 renderTemplates() {
+    cd /dspace/config
+
     for file in $(cat /templatize.txt); do
         if [[ -f "${file}.tpl" ]]; then
             cp "${file}.tpl" "${file}"
@@ -167,4 +169,11 @@ renderTemplates() {
     renderRobotsTxt
     renderSubmissionMap
     renderFormMap
+}
+
+prepareDSpaceApp() {
+    checkRequiredEnv || exit $?
+
+    renderTemplates
+    waitForDatabase
 }

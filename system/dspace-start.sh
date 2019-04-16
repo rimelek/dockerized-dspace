@@ -1,20 +1,12 @@
 #!/usr/bin/env bash
 
-WORKING_DIR=$(pwd)
+set -e
 
-cd /
+if [[ -z "$@" ]]; then
+    source /resources.sh
 
-source resources.sh
+    prepareDSpaceApp
 
-CUSTOM_COMMAND=$@
-
-checkRequiredEnv || exit $?
-
-renderTemplates
-waitForDatabase
-
-cd "${WORKING_DIR}"
-if [[ -z "${CUSTOM_COMMAND}" ]]; then
     exec catalina.sh run
 else
     exec $@
