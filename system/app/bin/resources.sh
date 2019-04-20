@@ -2,13 +2,15 @@
 
 REQUIRED_VARIABLES="config.db.password"
 
-CFG_DSPACE=/dspace/config/local.cfg
-CFG_LOGPROP=/dspace/config/log4j.properties
-CFG_DSC_CROSSWALKS_OAI=/dspace/config/crosswalks/oai/description.xml
-CFG_DSC=/dspace/config/description.xml
+DSPACE_DIR=/dspace
+
+CFG_DSPACE="${DSPACE_DIR}/config/local.cfg"
+CFG_LOGPROP="${DSPACE_DIR}/config/log4j.properties"
+CFG_DSC_CROSSWALKS_OAI="${DSPACE_DIR}/config/crosswalks/oai/description.xml"
+CFG_DSC="${DSPACE_DIR}/config/description.xml"
 CFG_ROBOTS="${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt"
-CFG_ITEM_SUBMISSION="/dspace/config/item-submission.xml"
-CFG_FORMS="/dspace/config/input-forms.xml"
+CFG_ITEM_SUBMISSION="${DSPACE_DIR}/config/item-submission.xml"
+CFG_FORMS="${DSPACE_DIR}/config/input-forms.xml"
 
 getenv() {
     echo "${1}" | awk '{print ENVIRON[$1]}'
@@ -43,12 +45,12 @@ checkRequiredEnv() {
 
 templatize() {
     local SRC=
-    for SRC in "/dspace/config/local.cfg" \
-             "/dspace/config/log4j.properties" \
-             "/dspace/config/crosswalks/oai/description.xml" \
-             "${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt" \
-             "/dspace/config/item-submission.xml" \
-             "/dspace/config/input-forms.xml" \
+    for SRC in "${CFG_DSPACE}" \
+               "${CFG_LOGPROP}" \
+               "${CFG_DSC_CROSSWALKS_OAI}" \
+               "${CFG_ROBOTS}" \
+               "${CFG_ITEM_SUBMISSION}" \
+               "${CFG_FORMS}" \
              ; do
         local DST="/app/templates${SRC}.tpl"
         local DST_DIR="$(dirname "${DST}")";
@@ -111,7 +113,7 @@ removeOverriddenConfigs() {
 }
 
 waitForDatabase() {
-    until /dspace/bin/dspace database test;
+    until ${DSPACE_DIR}/bin/dspace database test;
     do
         echo "Waiting for database... [$(date)]";
         sleep 2
