@@ -2,7 +2,7 @@
 
 REQUIRED_VARIABLES="config.db.password"
 
-DSPACE_DIR=/dspace
+DSPACE_DIR=/app/dspace
 
 CFG_DSPACE="${DSPACE_DIR}/config/local.cfg"
 CFG_LOGPROP="${DSPACE_DIR}/config/log4j.properties"

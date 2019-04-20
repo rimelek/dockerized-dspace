@@ -1,3 +1,4 @@
+dspace.dir = /app/dspace
 dspace.baseUrl = {{PROTOCOL}}://${dspace.hostname}{{PORT_SUFFIX}}
 solr.server = http://{{SOLR_HOSTNAME}}:8080/solr
 db.url = jdbc:postgresql://{{DB_HOST}}:{{DB_PORT}}/{{DB_SERVICE_NAME}}
