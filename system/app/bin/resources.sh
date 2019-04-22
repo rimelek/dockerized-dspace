@@ -135,7 +135,7 @@ renderLocalConfig() {
         DS_PORT_SUFFIX=":${DS_PORT}"
     fi;
 
-    for i in DB_HOST DB_PORT DB_SERVICE_NAME PROTOCOL PORT_SUFFIX; do
+    for i in DB_HOST DB_PORT DB_SERVICE_NAME PROTOCOL PORT_SUFFIX SOLR_HOSTNAME; do
         local VAR="DS_${i}"
         sedAndSave "s/{{$i}}/${!VAR}/g" "${CFG_DSPACE}"
     done;
