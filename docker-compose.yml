@@ -21,7 +21,7 @@ services:
       - mailer
       - redis
     volumes:
-      - assetstore:/dspace/assetstore
+      - assetstore:/app/dspace/assetstore
     environment: &xmluienv
       JAVA_OPTS: "-Xmx256m"
       DS_DB_HOST: db
@@ -55,10 +55,10 @@ services:
         GIT_COMMIT: dev
         APP_NAME: solr
     volumes:
-      - assetstore:/dspace/assetstore
-      - solr-authority-data:/dspace/solr/authority/data
-      - solr-search-data:/dspace/solr/search/data
-      - solr-statistics-data:/dspace/solr/statistics/data
+      - assetstore:/app/dspace/assetstore
+      - solr-authority-data:/app/dspace/solr/authority/data
+      - solr-search-data:/app/dspace/solr/search/data
+      - solr-statistics-data:/app/dspace/solr/statistics/data
     environment:
       <<: *xmluienv
       VIRTUAL_HOST: solr.${DSPACE_HOSTNAME}
@@ -71,7 +71,7 @@ services:
         GIT_COMMIT: dev
         APP_NAME: oai
     volumes:
-      - solr-oai-data:/dspace/solr/oai/data
+      - solr-oai-data:/app/dspace/solr/oai/data
     environment:
       <<: *xmluienv
       VIRTUAL_HOST: oai.${DSPACE_HOSTNAME}
