@@ -8,25 +8,24 @@ RUN rm -rf ${CATALINA_HOME}/webapps \
  && wget "https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/redisson/redisson-tomcat-8/${REDISSON_VERSION}/redisson-tomcat-8-${REDISSON_VERSION}.jar" \
         -O "${CATALINA_HOME}/lib/redisson-tomcat-8-${REDISSON_VERSION}.jar"
 
+COPY system /
+
 ONBUILD COPY --from=builder /app/dspace /app/dspace
 ONBUILD COPY --from=builder /dspace-webapps ${CATALINA_HOME}/webapps
-ONBUILD COPY system /
-ONBUILD COPY tomcat-solr /tmp/tomcat-solr
-ONBUILD COPY tomcat-xmlui /tmp/tomcat-xmlui
 
 ONBUILD ARG APP_NAME=xmlui
 ONBUILD ARG APP_ROOT=xmlui
 
 ONBUILD ENV APP_NAME=${APP_NAME}
 
-ONBUILD RUN if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
+ONBUILD RUN chmod +x -R /app/bin/*.sh \
+         && source /app/bin/resources.sh \
+         && if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
                 ln -s ${CATALINA_HOME}/webapps/${APP_NAME} ${CATALINA_HOME}/webapps/ROOT; \
             fi \
-         && if [ -d "/tmp/tomcat-${APP_NAME}" ]; then \
-                cp -R /tmp/tomcat-${APP_NAME}/. /usr/local/tomcat/. && rm -rf /tmp/tomcat-${APP_NAME}; \
+         && if [ -d "/app/tomcat/webapps/${APP_NAME}" ]; then \
+                cp -R "/app/tomcat/webapps/${APP_NAME}/." "/usr/local/tomcat/webapps/${APP_NAME}/."; \
             fi \
-         && chmod +x -R /app/bin/*.sh \
-         && source /app/bin/resources.sh \
          && templatize \
          && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' "${DSPACE_DIR}/config/xmlui.xconf"
 
