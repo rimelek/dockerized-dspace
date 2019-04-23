@@ -51,19 +51,16 @@ ONBUILD COPY srcCustom /src
 ONBUILD RUN cd /src/dspace-xmlui-mirage2/src/main/webapp \
          && adduser -D builder \
          && chown builder -R . \
-         && su -c "npm install" builder
-
-# dspace build
-
-ONBUILD RUN cd /src \
+         && su -c "npm install" builder \
+         && cd /src \
          && . /etc/profile.d/dspace.sh \
          && sed -i 's~^dspace.dir\(.*\)~dspace.dir = /app/dspace~' /src/dspace/config/dspace.cfg \
-         && mvn package -Dmirage2.on=true -Dmirage2.deps.included=false -Djava.version=1.8
-
-ONBUILD RUN cd /src/dspace/target/dspace-installer \
+         && mvn package -Dmirage2.on=true -Dmirage2.deps.included=false -Djava.version=1.8 \
+         && cd /src/dspace/target/dspace-installer \
          && ant install_code \
          && ant copy_webapps \
-         && ant update_geolite
+         && ant update_geolite \
+         && rm -rf /src
 
 ONBUILD ARG APP_NAME=xmlui
 
