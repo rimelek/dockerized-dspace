@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd /dspace/bin/
+cd /app/dspace/bin/
 
 ./dspace index-discovery
 ./dspace filter-media
