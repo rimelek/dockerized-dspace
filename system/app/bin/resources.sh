@@ -11,6 +11,16 @@ CFG_DSC="${DSPACE_DIR}/config/description.xml"
 CFG_ROBOTS="${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt"
 CFG_ITEM_SUBMISSION="${DSPACE_DIR}/config/item-submission.xml"
 CFG_FORMS="${DSPACE_DIR}/config/input-forms.xml"
+CFG_REST_WEB_XML="${CATALINA_HOME}/webapps/$([[ "${APP_NAME}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "rest")/WEB-INF/web.xml"
+
+toBool () {
+    local BOOL=$(echo "${1}" | tr '[:upper:]' '[:lower:]');
+    case ${BOOL} in
+        1|yes|on|true) echo "true"; ;;
+        0|no|off|false) echo "false"; ;;
+        *) echo "null";
+    esac;
+}
 
 getenv() {
     echo "${1}" | awk '{print ENVIRON[$1]}'
@@ -51,6 +61,7 @@ templatize() {
                "${CFG_ROBOTS}" \
                "${CFG_ITEM_SUBMISSION}" \
                "${CFG_FORMS}" \
+               "${CFG_REST_WEB_XML}" \
              ; do
         local DST="/app/templates${SRC}.tpl"
         local DST_DIR="$(dirname "${DST}")";
@@ -112,6 +123,14 @@ removeOverriddenConfigs() {
     done;
 }
 
+renderRestWebXml() {
+    if [[ "${APP_NAME}" != "rest" ]] || [[ "$(toBool "${DS_REST_FORCE_SSL}")"  == "true" ]]; then
+        return 0
+    fi;
+
+    sed -i 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "${CFG_REST_WEB_XML}"
+}
+
 waitForDatabase() {
     until ${DSPACE_DIR}/bin/dspace database test;
     do
@@ -171,6 +190,7 @@ renderTemplates() {
     renderRobotsTxt
     renderSubmissionMap
     renderFormMap
+    renderRestWebXml
 }
 
 prepareDSpaceApp() {

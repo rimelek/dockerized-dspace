@@ -37,7 +37,8 @@ ONBUILD ENV DS_PORT="8080" \
             DS_LOGLEVEL_DSPACE="WARN" \
             DS_PROTOCOL="http" \
             DS_SOLR_HOSTNAME="solr" \
-            DS_CUSTOM_CONFIG=""
+            DS_CUSTOM_CONFIG="" \
+            DS_REST_FORCE_SSL="true"
 
 ONBUILD ENV config.dspace.ui="xmlui" \
             config.dspace.url="\${dspace.baseUrl}" \

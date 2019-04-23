@@ -86,6 +86,19 @@ services:
     environment:
       <<: *xmluienv
       VIRTUAL_HOST: swordv2.${DSPACE_HOSTNAME}
+  rest:
+    depends_on:
+      - db
+      - mailer
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+        APP_NAME: rest
+    environment:
+      <<: *xmluienv
+      VIRTUAL_HOST: rest.${DSPACE_HOSTNAME}
+      DS_REST_FORCE_SSL: "false"
   db:
     image: postgres:10.5-alpine
     environment:
