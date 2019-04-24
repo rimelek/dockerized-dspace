@@ -24,8 +24,8 @@ ONBUILD RUN chmod +x -R /app/bin/*.sh \
          && if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
                 ln -s ${CATALINA_HOME}/webapps/${APP_NAME} ${CATALINA_HOME}/webapps/ROOT; \
             fi \
-         && if [ -d "/app/tomcat/webapps/${APP_NAME}" ]; then \
-                cp -R "/app/tomcat/webapps/${APP_NAME}/." "/usr/local/tomcat/webapps/${APP_NAME}/."; \
+         && if [ "${APP_NAME}" == "solr" ]; then \
+                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/web.xml"; \
             fi \
          && templatize \
          && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' "${DSPACE_DIR}/config/xmlui.xconf"
