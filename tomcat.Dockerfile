@@ -17,15 +17,16 @@ ONBUILD COPY --from=builder /dspace-webapps ${CATALINA_HOME}/webapps
 ONBUILD ARG APP_NAME=xmlui
 ONBUILD ARG APP_ROOT=xmlui
 
-ONBUILD ENV APP_NAME=${APP_NAME}
+ONBUILD ENV APP_NAME=${APP_NAME} \
+            APP_ROOT=${APP_ROOT}
 
 ONBUILD RUN chmod +x -R /app/bin/*.sh \
          && source /app/bin/resources.sh \
-         && if [ "${APP_NAME}" == "${APP_ROOT}" ]; then \
-                ln -s ${CATALINA_HOME}/webapps/${APP_NAME} ${CATALINA_HOME}/webapps/ROOT; \
+         && if [ "${CFG_APP_DIR}" != "${CFG_APP_DIR_FINAL}" ]; then \
+                mv ${CFG_APP_DIR} "${CFG_APP_DIR_FINAL}"; \
             fi \
          && if [ "${APP_NAME}" == "solr" ]; then \
-                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/web.xml"; \
+                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "${CFG_APP_DIR_FINAL}/WEB-INF/web.xml"; \
             fi \
          && templatize \
          && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' "${DSPACE_DIR}/config/xmlui.xconf"
