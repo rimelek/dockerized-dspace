@@ -12,6 +12,9 @@ CFG_ROBOTS="${CATALINA_HOME}/webapps/${APP_NAME}/static/robots.txt"
 CFG_ITEM_SUBMISSION="${DSPACE_DIR}/config/item-submission.xml"
 CFG_FORMS="${DSPACE_DIR}/config/input-forms.xml"
 CFG_REST_WEB_XML="${CATALINA_HOME}/webapps/$([[ "${APP_NAME}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "rest")/WEB-INF/web.xml"
+CFG_CONTEXT_APP="${CATALINA_HOME}/webapps/$([[ "${APP_NAME}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "${APP_NAME}")/META-INF/context.xml"
+CFG_CONTEXT_APP_BASE="/app/tomcat/conf/context.appBase.xml"
+CFG_CONTEXT_APP_BASE_XSL="/app/tomcat/conf/context.appBase.xsl"
 
 toBool () {
     local BOOL=$(echo "${1}" | tr '[:upper:]' '[:lower:]');
@@ -177,11 +180,20 @@ renderLocalConfig() {
     getConfigMap >> "${CFG_DSPACE}"
 }
 
+renderContext() {
+    xmlstarlet tr "${CFG_CONTEXT_APP_BASE_XSL}" -s DS_REDIS_SESSION=$(toBool "${DS_REDIS_SESSION}") "${CFG_CONTEXT_APP_BASE}" > "${CFG_CONTEXT_APP}"
+}
+
 renderTemplates() {
 
     local file=""
-    for file in $(find /app/templates -type f -name *.tpl); do
-        cp "${file}" "${file:14:-4}"
+    local dst=""
+    for file in $(find /app/templates -type f); do
+        dst="${file:14}"
+        if [[ "${dst:${#dst}-4:4}" == ".tpl" ]]; then
+            dst="${dst:0:-4}"
+        fi;
+        cp "${file}" "${dst}"
     done;
 
     renderLocalConfig
@@ -191,6 +203,7 @@ renderTemplates() {
     renderSubmissionMap
     renderFormMap
     renderRestWebXml
+    renderContext
 }
 
 prepareDSpaceApp() {

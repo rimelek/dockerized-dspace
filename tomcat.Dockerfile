@@ -6,7 +6,8 @@ RUN rm -rf ${CATALINA_HOME}/webapps \
  && wget "https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/redisson/redisson-all/${REDISSON_VERSION}/redisson-all-${REDISSON_VERSION}.jar" \
         -O "${CATALINA_HOME}/lib/redisson-all-${REDISSON_VERSION}.jar" \
  && wget "https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/redisson/redisson-tomcat-8/${REDISSON_VERSION}/redisson-tomcat-8-${REDISSON_VERSION}.jar" \
-        -O "${CATALINA_HOME}/lib/redisson-tomcat-8-${REDISSON_VERSION}.jar"
+        -O "${CATALINA_HOME}/lib/redisson-tomcat-8-${REDISSON_VERSION}.jar" \
+ && apk --no-cache add xmlstarlet
 
 COPY system /
 
@@ -38,7 +39,8 @@ ONBUILD ENV DS_PORT="8080" \
             DS_PROTOCOL="http" \
             DS_SOLR_HOSTNAME="solr" \
             DS_CUSTOM_CONFIG="" \
-            DS_REST_FORCE_SSL="true"
+            DS_REST_FORCE_SSL="true" \
+            DS_REDIS_SESSION="true"
 
 ONBUILD ENV config.dspace.ui="xmlui" \
             config.dspace.url="\${dspace.baseUrl}" \
