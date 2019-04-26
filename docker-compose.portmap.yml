@@ -1,6 +1,9 @@
 version: "3.4"
 
 services:
+  allapps:
+    ports:
+      - 127.0.10.1:8080:8080
   xmlui:
     ports:
       - 127.0.10.1:8080:8080

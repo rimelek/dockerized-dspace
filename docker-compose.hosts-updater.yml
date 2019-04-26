@@ -10,6 +10,9 @@ volumes:
   hosts:
 
 services:
+  allapps:
+    depends_on:
+      - hosts-updater
   xmlui:
     depends_on:
       - hosts-updater
