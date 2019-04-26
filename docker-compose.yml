@@ -16,6 +16,7 @@ services:
       args:
         GIT_COMIT: dev
         APP_NAME: xmlui solr oai swordv2 rest
+      target: localhost/dspace/dspace-tomcat-allapps
     depends_on:
       - db
       - mailer
@@ -56,6 +57,7 @@ services:
       context: .
       args:
         GIT_COMMIT: dev
+      target: localhost/dspace/dspace-tomcat-xmlui
     depends_on:
       - db
       - solr
@@ -78,6 +80,7 @@ services:
       args:
         GIT_COMMIT: dev
         APP_NAME: solr
+      target: localhost/dspace/dspace-tomcat-solr
     volumes:
       - assetstore:/app/dspace/assetstore
       - solr-authority-data:/app/dspace/solr/authority/data
@@ -94,6 +97,7 @@ services:
       args:
         GIT_COMMIT: dev
         APP_NAME: oai
+      target: localhost/dspace/dspace-tomcat-oai
     volumes:
       - solr-oai-data:/app/dspace/solr/oai/data
     environment:
@@ -107,6 +111,7 @@ services:
       args:
         GIT_COMMIT: dev
         APP_NAME: swordv2
+      target: localhost/dspace/dspace-tomcat-swordv2
     environment:
       <<: *xmluiEnv
       VIRTUAL_HOST: swordv2.${DSPACE_HOSTNAME}
@@ -119,6 +124,7 @@ services:
       args:
         GIT_COMMIT: dev
         APP_NAME: rest
+      target: localhost/dspace/dspace-tomcat-rest
     environment:
       <<: *xmluiEnv
       VIRTUAL_HOST: rest.${DSPACE_HOSTNAME}
