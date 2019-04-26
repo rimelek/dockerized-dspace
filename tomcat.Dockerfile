@@ -22,11 +22,9 @@ ONBUILD ENV APP_NAME=${APP_NAME} \
 
 ONBUILD RUN chmod +x -R /app/bin/*.sh \
          && source /app/bin/resources.sh \
-         && if [ "${CFG_APP_DIR}" != "${CFG_APP_DIR_FINAL}" ]; then \
-                mv ${CFG_APP_DIR} "${CFG_APP_DIR_FINAL}"; \
-            fi \
-         && if [ "${APP_NAME}" == "solr" ]; then \
-                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "${CFG_APP_DIR_FINAL}/WEB-INF/web.xml"; \
+         && moveAppsToFinalDir \
+         && if [ "$(isAppInstallable "solr")" == "true" ]; then \
+                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "$(getAppDir "solr")/WEB-INF/web.xml"; \
             fi \
          && templatize \
          && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' "${DSPACE_DIR}/config/xmlui.xconf"
@@ -38,7 +36,7 @@ ONBUILD ENV DS_PORT="8080" \
             DS_LOGLEVEL_OTHER="WARN" \
             DS_LOGLEVEL_DSPACE="WARN" \
             DS_PROTOCOL="http" \
-            DS_SOLR_HOSTNAME="solr" \
+            DS_SOLR_HOSTNAME="localhost" \
             DS_CUSTOM_CONFIG="" \
             DS_REST_FORCE_SSL="true" \
             DS_REDIS_SESSION="true"

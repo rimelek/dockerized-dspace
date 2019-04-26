@@ -8,13 +8,9 @@ CFG_DSPACE="${DSPACE_DIR}/config/local.cfg"
 CFG_LOGPROP="${DSPACE_DIR}/config/log4j.properties"
 CFG_DSC_CROSSWALKS_OAI="${DSPACE_DIR}/config/crosswalks/oai/description.xml"
 CFG_DSC="${DSPACE_DIR}/config/description.xml"
-CFG_APP_DIR="${CATALINA_HOME}/webapps/${APP_NAME}"
-CFG_APP_DIR_FINAL="${CATALINA_HOME}/webapps/$([[ "${APP_NAME}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "${APP_NAME}")"
-CFG_ROBOTS="${CFG_APP_DIR_FINAL}/static/robots.txt"
+CFG_WEBAPPS_DIR="${CATALINA_HOME}/webapps"
 CFG_ITEM_SUBMISSION="${DSPACE_DIR}/config/item-submission.xml"
 CFG_FORMS="${DSPACE_DIR}/config/input-forms.xml"
-CFG_REST_WEB_XML="${CATALINA_HOME}/webapps/$([[ "${APP_NAME}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "rest")/WEB-INF/web.xml"
-CFG_CONTEXT_APP="${CFG_APP_DIR_FINAL}/META-INF/context.xml"
 CFG_CONTEXT_APP_BASE="/app/tomcat/conf/context.appBase.xml"
 CFG_CONTEXT_APP_BASE_XSL="/app/tomcat/conf/context.appBase.xsl"
 
@@ -58,15 +54,46 @@ checkRequiredEnv() {
     done;
 }
 
+getAppDirName() {
+    local appName="${1}"
+    [[ "${appName}" == "${APP_ROOT}" ]] && echo "ROOT" || echo "${appName}";
+}
+
+getAppDir() {
+    local appName="${1}"
+    echo "${CFG_WEBAPPS_DIR}/$(getAppDirName "${appName}")"
+}
+
+isAppInstallable() {
+    local appName="${1}"
+    toBool "$(echo "${APP_NAME}" | awk -v appName="${appName}" '{regex="(\\s|^)"appName"(\\s|$)"; print $0 ~ regex }')"
+}
+
+moveAppToFinalDir() {
+    local appName="${1}"
+    local appDirSrc="${CFG_WEBAPPS_DIR}/${appName}"
+    local appDir="$(getAppDir "${appName}")"
+    if [[ "${appDirSrc}"  != "${appDir}" ]]; then
+        mv "${appDirSrc}" "${appDir}"
+    fi;
+}
+
+moveAppsToFinalDir() {
+    local appName=""
+    for appName in ${APP_NAME}; do
+        moveAppToFinalDir "${appName}"
+    done
+}
+
 templatize() {
     local SRC=
     for SRC in "${CFG_DSPACE}" \
                "${CFG_LOGPROP}" \
                "${CFG_DSC_CROSSWALKS_OAI}" \
-               "${CFG_ROBOTS}" \
+               "$(getAppDir "xmlui")/static/robots.txt" \
                "${CFG_ITEM_SUBMISSION}" \
                "${CFG_FORMS}" \
-               "${CFG_REST_WEB_XML}" \
+               "$(getAppDir "rest")/WEB-INF/web.xml" \
              ; do
         local DST="/app/templates${SRC}.tpl"
         local DST_DIR="$(dirname "${DST}")";
@@ -101,7 +128,10 @@ renderFormMap() {
     formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
 }
 
-renderRobotsTxt() {
+renderRobotsTxtXmlui() {
+    if [[ "(isAppInstallable "xmlui")" != "true" ]]; then
+        return 0
+    fi
     if [[ -f "${CFG_ROBOTS}" ]]; then
         URL="${DS_PROTOCOL}://$(getenv "config.dspace.hostname")${DS_PORT_SUFFIX}"
         sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
@@ -183,7 +213,16 @@ renderLocalConfig() {
 }
 
 renderContext() {
-    xmlstarlet tr "${CFG_CONTEXT_APP_BASE_XSL}" -s DS_REDIS_SESSION=$(toBool "${DS_REDIS_SESSION}") "${CFG_CONTEXT_APP_BASE}" > "${CFG_CONTEXT_APP}"
+    local appName="${1}"
+    local appContext="$(getAppDir "${appName}")/META-INF/context.xml"
+    xmlstarlet tr "${CFG_CONTEXT_APP_BASE_XSL}" -s DS_REDIS_SESSION=$(toBool "${DS_REDIS_SESSION}") "${CFG_CONTEXT_APP_BASE}" > "${appContext}"
+}
+
+renderContexts() {
+    local appName=""
+    for appName in ${APP_NAME}; do
+        renderContext "${appName}"
+    done;
 }
 
 renderTemplates() {
@@ -201,11 +240,11 @@ renderTemplates() {
     renderLocalConfig
     renderLogConfig
     renderOAIDescription
-    renderRobotsTxt
+    renderRobotsTxtXmlui
     renderSubmissionMap
     renderFormMap
     renderRestWebXml
-    renderContext
+    renderContexts
 }
 
 prepareDSpaceApp() {

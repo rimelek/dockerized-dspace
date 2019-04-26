@@ -10,23 +10,22 @@ volumes:
   assetstore:
 
 services:
-  xmlui:
+  allapps:
     build:
       context: .
       args:
-        GIT_COMMIT: dev
+        GIT_COMIT: dev
+        APP_NAME: xmlui solr oai swordv2 rest
     depends_on:
       - db
-      - solr
       - mailer
       - redis
-    volumes:
-      - assetstore:/app/dspace/assetstore
-    environment: &xmluienv
-      JAVA_OPTS: "-Xmx256m"
+    environment: &allAppsEnv
+      JAVA_OPTS: "-Xmx2048m"
       DS_DB_HOST: db
       DS_DB_USER: ${DS_DB_USER:-dspace}
       DS_DB_PASSWORD: ${DS_DB_PASSWORD:-password}
+      DS_REST_FORCE_SSL: "false"
       ## Line by line list of hidden metadata without "metadata.hide." at the beginning and " = true" at the end.
       # DS_HIDDEN_METADATA: |
       #   schema.element.qualifier1
@@ -45,6 +44,30 @@ services:
       config.handle.canonical.prefix: "$${dspace.url}/handle/"
       # config.webui.submission.restrictstep.groups: SubmissionAdmin
       # config.webui.submission.restrictstep.enableAdvancedForm: "true"
+      config.swordv2-server.url: http://${DSPACE_HOSTNAME}:8080/swordv2
+    volumes:
+      - assetstore:/app/dspace/assetstore
+      - solr-authority-data:/app/dspace/solr/authority/data
+      - solr-search-data:/app/dspace/solr/search/data
+      - solr-statistics-data:/app/dspace/solr/statistics/data
+      - solr-oai-data:/app/dspace/solr/oai/data
+  xmlui:
+    build:
+      context: .
+      args:
+        GIT_COMMIT: dev
+    depends_on:
+      - db
+      - solr
+      - mailer
+      - redis
+    volumes:
+      - assetstore:/app/dspace/assetstore
+    environment: &xmluiEnv
+      <<: *allAppsEnv
+      JAVA_OPTS: "-Xmx256m"
+      DS_SOLR_HOSTNAME: solr
+      VIRTUAL_HOST: ${DSPACE_HOSTNAME:-dspace}
       config.swordv2-server.url: http://swordv2.${DSPACE_HOSTNAME}:8080/swordv2
   solr:
     depends_on:
@@ -60,7 +83,7 @@ services:
       - solr-search-data:/app/dspace/solr/search/data
       - solr-statistics-data:/app/dspace/solr/statistics/data
     environment:
-      <<: *xmluienv
+      <<: *xmluiEnv
       VIRTUAL_HOST: solr.${DSPACE_HOSTNAME}
   oai:
     depends_on:
@@ -73,7 +96,7 @@ services:
     volumes:
       - solr-oai-data:/app/dspace/solr/oai/data
     environment:
-      <<: *xmluienv
+      <<: *xmluiEnv
       VIRTUAL_HOST: oai.${DSPACE_HOSTNAME}
   swordv2:
     depends_on:
@@ -84,7 +107,7 @@ services:
         GIT_COMMIT: dev
         APP_NAME: swordv2
     environment:
-      <<: *xmluienv
+      <<: *xmluiEnv
       VIRTUAL_HOST: swordv2.${DSPACE_HOSTNAME}
   rest:
     depends_on:
@@ -96,9 +119,8 @@ services:
         GIT_COMMIT: dev
         APP_NAME: rest
     environment:
-      <<: *xmluienv
+      <<: *xmluiEnv
       VIRTUAL_HOST: rest.${DSPACE_HOSTNAME}
-      DS_REST_FORCE_SSL: "false"
   db:
     image: postgres:10.5-alpine
     environment:
