@@ -65,7 +65,9 @@ ONBUILD RUN cd /src/dspace-xmlui-mirage2/src/main/webapp \
 ONBUILD ARG APP_NAME=xmlui
 
 ONBUILD RUN mkdir /dspace-webapps \
-         && cp -rp /app/dspace/webapps/${APP_NAME}/. /dspace-webapps/${APP_NAME} \
+         && for appName in ${APP_NAME}; do \
+                cp -rp /app/dspace/webapps/${appName}/. /dspace-webapps/${appName}; \
+            done \
          && rm -rf /app/dspace/webapps
 
 ARG GIT_COMMIT=""
