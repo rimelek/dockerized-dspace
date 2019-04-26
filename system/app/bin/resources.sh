@@ -166,6 +166,14 @@ renderRestWebXml() {
     sed -i 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "${CFG_REST_WEB_XML}"
 }
 
+renderSolrWebXml() {
+    if [[ "$(isAppInstallable "solr")" == "true" ]]; then
+        if [[ "$(toBool "${DS_SOLR_ALLOW_REMOTE}")" == "true" ]]; then
+            xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "$(getAppDir "solr")/WEB-INF/web.xml"
+        fi;
+    fi
+}
+
 waitForDatabase() {
     until ${DSPACE_DIR}/bin/dspace database test;
     do
@@ -244,6 +252,7 @@ renderTemplates() {
     renderSubmissionMap
     renderFormMap
     renderRestWebXml
+    renderSolrWebXml
     renderContexts
 }
 

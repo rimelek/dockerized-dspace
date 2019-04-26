@@ -23,9 +23,6 @@ ONBUILD ENV APP_NAME=${APP_NAME} \
 ONBUILD RUN chmod +x -R /app/bin/*.sh \
          && source /app/bin/resources.sh \
          && moveAppsToFinalDir \
-         && if [ "$(isAppInstallable "solr")" == "true" ]; then \
-                xmlstarlet ed -L -d '/web-app/filter-mapping[./filter-name/text() = "LocalHostRestrictionFilter"]' "$(getAppDir "solr")/WEB-INF/web.xml"; \
-            fi \
          && templatize \
          && sed -i  's~<themes>~<themes><theme name="Mirage 2" regex=".*" path="Mirage2/" />~' "${DSPACE_DIR}/config/xmlui.xconf"
 
@@ -37,6 +34,7 @@ ONBUILD ENV DS_PORT="8080" \
             DS_LOGLEVEL_DSPACE="WARN" \
             DS_PROTOCOL="http" \
             DS_SOLR_HOSTNAME="localhost" \
+            DS_SOLR_ALLOW_REMOTE="false" \
             DS_CUSTOM_CONFIG="" \
             DS_REST_FORCE_SSL="true" \
             DS_REDIS_SESSION="true"

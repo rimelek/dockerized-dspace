@@ -67,6 +67,7 @@ services:
       <<: *allAppsEnv
       JAVA_OPTS: "-Xmx256m"
       DS_SOLR_HOSTNAME: solr
+      DS_SOLR_ALLOW_REMOTE: "true"
       VIRTUAL_HOST: ${DSPACE_HOSTNAME:-dspace}
       config.swordv2-server.url: http://swordv2.${DSPACE_HOSTNAME}:8080/swordv2
   solr:
