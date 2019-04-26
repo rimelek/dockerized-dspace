@@ -159,7 +159,7 @@ removeOverriddenConfigs() {
 }
 
 renderRestWebXml() {
-    if [[ "${APP_NAME}" != "rest" ]] || [[ "$(toBool "${DS_REST_FORCE_SSL}")"  == "true" ]]; then
+    if [[ "$(isAppInstallable "rest")" == "true" ]] || [[ "$(toBool "${DS_REST_FORCE_SSL}")"  == "true" ]]; then
         return 0
     fi;
 
