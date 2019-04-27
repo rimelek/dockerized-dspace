@@ -32,7 +32,7 @@ docker build \
     .
 ```
 
-or download it from [Docker Hub](https://cloud.docker.com/u/itsziget/repository/docker/itsziget/dspace-builder)
+or download it from [Docker Hub](https://hub.docker.com/r/itsziget/dspace-builder)
 
 
 
@@ -53,7 +53,7 @@ docker build \
     .
 ```
 
-or download it from [Docker Hub](https://cloud.docker.com/u/itsziget/repository/docker/itsziget/dspace-tomcat)
+or download it from [Docker Hub](https://hub.docker.com/r/itsziget/dspace-tomcat)
 
 #### Application
 
