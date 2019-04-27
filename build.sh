@@ -22,7 +22,7 @@ trim() {
 }
 
 usage() {
-    echo "Usage: $0 [-r <REGISTRY>] [-o <OWNER>] [-t <TAG>] [-a <APP_NAME>]"
+    echo "Usage: $0 [-r <REGISTRY>] [-o <OWNER>] [-t <TAG>] [-a <APP_NAME>] [-b <BUILD_NAME>]"
     echo
     echo "  -a <APP_NAME>    The name of the DSpace app in case you want to build an application image too."
     echo "                   You can pass multiple names but then you need to specify a build name using the option -b. "
@@ -37,7 +37,6 @@ usage() {
     echo "builder: <REGISTRY>/<OWNER>/dspace-builder:<TAG>"
     echo "tomcat:  <REGISTRY>/<OWNER>/dspace-tomcat:<TAG>"
     echo "app:     <REGISTRY>/<OWNER>/dspace-tomcat-<BUILD_NAME>"
-    exit 1
 }
 
 while getopts ':t:a:b:o:r:h' opt; do
