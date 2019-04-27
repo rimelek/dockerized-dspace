@@ -159,11 +159,11 @@ removeOverriddenConfigs() {
 }
 
 renderRestWebXml() {
-    if [[ "$(isAppInstallable "rest")" == "true" ]] || [[ "$(toBool "${DS_REST_FORCE_SSL}")"  == "true" ]]; then
+    if [[ "$(isAppInstallable "rest")" != "true" ]] || [[ "$(toBool "${DS_REST_FORCE_SSL}")"  == "true" ]]; then
         return 0
     fi;
 
-    sedAndSave 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "${CFG_REST_WEB_XML}"
+    sedAndSave 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "$(getAppDir "rest")/WEB-INF/web.xml"
 }
 
 renderSolrWebXml() {
