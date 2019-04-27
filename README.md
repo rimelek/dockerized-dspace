@@ -237,7 +237,7 @@ There are environment variables to customize configurations like database connec
 * **DS_DB_SERVICE_NAME:** (default: "dspace") The name of the postgresql database
 * **DS_LOGLEVEL_OTHER:** (default: "WARN") Value of loglevel.other in log4j.properties
 * **DS_LOGLEVEL_DSPACE:** (default: "WARN") Value of loglevel.dspace in log4j.properties
-* **DS_PROTOCOL:** (default: "http") Protocol of the XMLUI. https or http \
+* **DS_PROTOCOL:** (default: "http") Protocol of the XMLUI. https or http
 * **DS_SOLR_HOSTNAME:** (default: "solr") Internal hostname of solr server. It will always use http protocol.
 * **DS_SOLR_ALLOW_REMOTE:** (default: "false") If it is "true" solr can be accessible from anywhere. In this case you
                             should use an external firewall/proxy to deny untrusted clients to connect.   
