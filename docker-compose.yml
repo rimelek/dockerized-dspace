@@ -24,8 +24,6 @@ services:
     environment: &allAppsEnv
       JAVA_OPTS: "-Xmx2048m"
       DS_DB_HOST: db
-      DS_DB_USER: ${DS_DB_USER:-dspace}
-      DS_DB_PASSWORD: ${DS_DB_PASSWORD:-password}
       DS_REST_FORCE_SSL: "false"
       ## Line by line list of hidden metadata without "metadata.hide." at the beginning and " = true" at the end.
       # DS_HIDDEN_METADATA: |
