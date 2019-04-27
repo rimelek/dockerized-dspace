@@ -97,13 +97,20 @@ does not exist yet.
 
 **Tomcat**
 
-* **APP_NAME:** (default: "xmlui") It must have the same value as it was in the builder. It informs the the tomcat
+* **APP_NAME:** (default: "xmlui") It must have the same value as it was in the builder. It informs the tomcat
                 builder and the running container's scripts which applications it needs to deal with. When you run
                 the the container, those scripts try to modify only the installed applications' configurations
                 based on the environment variables.
 * **APP_ROOT:** (default: "xmlui") It must contain only one application's name. It will be renamed to "ROOT"
                 to make it web root.
-                
+
+#### Customize the start process
+
+You can change how the container starts. Copy the following files into the image or mount them into the container
+to do it:
+
+* **/app/dspace/bin/custom/beforePrepare.sh:** It will be executed before the built-in scripts.
+* **/app/dspace/bin/custom/afterPrepare.sh:** It will be executed after the built-in scripts.
 
 ### Prepare the database
 
