@@ -65,7 +65,7 @@ FROM localhost/dspace/dspace-builder as builder
 FROM localhost/dspace/dspace-tomcat
 ```
 
-and place the custom sourcecode into "srcCustom" and the tomcat image customization into "system" directory.
+and place the custom sourcecode into "srcCustom".
 
 You can use the images from Docker Hub of course.
 
