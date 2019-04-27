@@ -31,8 +31,12 @@ usage() {
     echo "  -r <REGISTRY>    The name of the registry. (\"localhost\" by default)"
     echo "  -t <TAG>         The tag of the image."
     echo
-    echo "The patterns of the final images name:"
+    echo "  -h               Show the help"
+    echo
+    echo "The patterns of the final images:"
     echo "builder: <REGISTRY>/<OWNER>/dspace-builder:<TAG>"
+    echo "tomcat:  <REGISTRY>/<OWNER>/dspace-tomcat:<TAG>"
+    echo "app:     <REGISTRY>/<OWNER>/dspace-tomcat-<BUILD_NAME>"
     exit 1
 }
 
