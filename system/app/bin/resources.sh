@@ -119,13 +119,13 @@ formMapToXml() {
 }
 
 renderSubmissionMap() {
-    sed -i 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
+    sedAndSave 's~<name-map.*/>~~' "${CFG_ITEM_SUBMISSION}"
     submissionMapToXml | while read -r line; do sed -i "s~</submission-map>~    ${line}\n</submission-map>~" "${CFG_ITEM_SUBMISSION}"; done;
 }
 
 renderFormMap() {
-    sed -i 's~<name-map.*/>~~' "${CFG_FORMS}"
-    formMapToXml | while read -r line; do sed -i "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
+    sedAndSave 's~<name-map.*/>~~' "${CFG_FORMS}"
+    formMapToXml | while read -r line; do sedAndSave "s~</form-map>~    ${line}\n</form-map>~" "${CFG_FORMS}"; done;
 }
 
 renderRobotsTxtXmlui() {
@@ -134,26 +134,26 @@ renderRobotsTxtXmlui() {
     fi
     if [[ -f "${CFG_ROBOTS}" ]]; then
         URL="${DS_PROTOCOL}://$(getenv "config.dspace.hostname")${DS_PORT_SUFFIX}"
-        sed -i "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
+        sedAndSave "s~http://localhost:8080/xmlui~${URL}~" "${CFG_ROBOTS}"
     fi;
 }
 
 renderOAIDescription() {
-    sed -i "s/localhost/$(getenv "config.dspace.hostname")/g" "${CFG_DSC_CROSSWALKS_OAI}"
-    sed -i "s/123456789/$(getenv "config.handle.prefix")/g" "${CFG_DSC_CROSSWALKS_OAI}"
+    sedAndSave "s/localhost/$(getenv "config.dspace.hostname")/g" "${CFG_DSC_CROSSWALKS_OAI}"
+    sedAndSave "s/123456789/$(getenv "config.handle.prefix")/g" "${CFG_DSC_CROSSWALKS_OAI}"
 }
 
 renderLogConfig() {
     if [[ ! -z "${CFG_LOGPROP}" ]]; then
-        sed -i "s/loglevel\.other=INFO/loglevel.other=${DS_LOGLEVEL_OTHER^^}/g" "${CFG_LOGPROP}"
-        sed -i "s/loglevel\.dspace=INFO/loglevel.dspace=${DS_LOGLEVEL_DSPACE^^}/g" "${CFG_LOGPROP}"
+        sedAndSave "s/loglevel\.other=INFO/loglevel.other=${DS_LOGLEVEL_OTHER^^}/g" "${CFG_LOGPROP}"
+        sedAndSave "s/loglevel\.dspace=INFO/loglevel.dspace=${DS_LOGLEVEL_DSPACE^^}/g" "${CFG_LOGPROP}"
     fi;
 }
 
 removeOverriddenConfigs() {
     for i in "dspace.baseUrl" "solr.server" "db.url"; do
         if [[ -n "$(getenv "config.${i}")" ]]; then
-            sed -i 's/^'${i/\./\\.}'\(=\| \).*//g' "${CFG_DSPACE}"
+            sedAndSave 's/^'${i/\./\\.}'\(=\| \).*//g' "${CFG_DSPACE}"
         fi;
     done;
 }
@@ -163,7 +163,7 @@ renderRestWebXml() {
         return 0
     fi;
 
-    sed -i 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "${CFG_REST_WEB_XML}"
+    sedAndSave 's~<transport-guarantee>CONFIDENTIAL</transport-guarantee>~~' "${CFG_REST_WEB_XML}"
 }
 
 renderSolrWebXml() {
