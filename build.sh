@@ -82,14 +82,8 @@ if [[ -z "${REGISTRY}" ]]; then
     REGISTRY="localhost"
 fi
 
-if [[ -z "${APP_NAME}" ]]; then
-    >&2 echo "Required option: -a <APP_NAME>"
-    exit 1
-fi
-
-APP_NAME="$(trim "${APP_NAME}")"
-
-if [[ -z "${BUILD_NAME}" ]]; then
+if [[ -n "${APP_NAME}" ]] && [[ -z "${BUILD_NAME}" ]]; then
+    APP_NAME="$(trim "${APP_NAME}")"
     if [[ ! "${APP_NAME}" =~ *" "* ]]; then
         BUILD_NAME="${APP_NAME}"
     else
