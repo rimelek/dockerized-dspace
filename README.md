@@ -3,7 +3,7 @@
 Running DSpace inside docker containers can be tricky. This project helps you to run each webapp in separate containers.
 In fact, you can decide which app you want to install; therefore you can still run each of them in the same container.
 
-Supported application are:
+Supported applications are:
 
 * oai
 * rest
@@ -14,6 +14,8 @@ Supported application are:
 ## Installation
 
 ### Build the images
+
+#### Builder
 
 [builder.Dockerfile](builder.Dockerfile) is to build DSpace. It contains [ONBUILD](https://docs.docker.com/engine/reference/builder/#onbuild)
 instructions so you can place your customization into "srcCustom" directory next to your Dockerfile.
@@ -32,6 +34,11 @@ docker build \
 
 or download it from [Docker Hub](https://cloud.docker.com/u/itsziget/repository/docker/itsziget/dspace-builder)
 
+
+
+
+#### Tomcat
+
 [tomcat.Dockerfile](tomcat.Dockerfile) is similar to the builder except it helps you create a tomcat image
 for DSpace applications. It contains configuration templates, Redis session support and scripts to let you 
 change configurations using environment variables.
@@ -47,6 +54,8 @@ docker build \
 ```
 
 or download it from [Docker Hub](https://cloud.docker.com/u/itsziget/repository/docker/itsziget/dspace-tomcat)
+
+#### Application
 
 If you want to build the final application image, you need to create a Dockerfile like the following:
 
@@ -72,6 +81,29 @@ See the output of the following command for more information:
 ```
 ./build.sh -h
 ```
+
+The other way to build the application image is to run the Docker Compose service. It will build the image if that
+does not exist yet.
+ 
+#### OnBuild arguments
+
+**Builder**
+
+* **APP_NAME:** (default: "xmlui") Which application you want to build. To build more application, set them separated by space.
+                Currently, all apps will be built but those you do not set will be removed from the image.
+                The rest of them are moved to "/dspace-webapps" so the tomcat image builder can copy
+                only those you need without causing one additional layer per application or increasing the size of
+                the final image unnecessarily.
+
+**Tomcat**
+
+* **APP_NAME:** (default: "xmlui") It must have the same value as it was in the builder. It informs the the tomcat
+                builder and the running container's scripts which applications it needs to deal with. When you run
+                the the container, those scripts try to modify only the installed applications' configurations
+                based on the environment variables.
+* **APP_ROOT:** (default: "xmlui") It must contain only one application's name. It will be renamed to "ROOT"
+                to make it web root.
+                
 
 ### Prepare the database
 
@@ -124,7 +156,7 @@ docker-compose exec allapps /dspace/bin/dspace create-administrator
 
 ### Open the web applications in your browser
 
-You have three options:
+You have more options:
 
 **1. Use the docker containers IP addresses**
 
@@ -152,7 +184,7 @@ If you are on linux host, you can update the hosts file automatically and use cu
 
 Before you run the hosts updater create a copy of "/etc/hosts" as "/etc/hosts.docker.tpl".
 hosts.docker.tpl will never be changed. It will be a template so the hosts file will always contain everything
-from the hosts.tpl and the updater appends the additional domains. If anything goes wrong and your hosts file becomes corrupted
+from the hosts.docker.tpl and the updater appends the additional domains. If anything goes wrong and your hosts file becomes corrupted
 restore it from the template manually.
 
 ```bash
@@ -222,7 +254,7 @@ xmlui:
     config.dspace.url: https://mydspace.tld:8080
 ```
 
-The following are set by default in each docker image:
+The followings are set by default in each docker image:
 
 * **config.dspace.ui:** "xmlui"
 * **config.dspace.url:** "${dspace.baseUrl}"
