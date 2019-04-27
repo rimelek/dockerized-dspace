@@ -55,7 +55,7 @@ while getopts ':t:a:b:o:r:h' opt; do
             OWNER="${OPTARG}"
             ;;
         r)
-            REPOSITORY="${OPTARG}"
+            REGISTRY="${OPTARG}"
             ;;
         h)
             usage
