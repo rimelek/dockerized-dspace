@@ -1,4 +1,11 @@
-# Dockerized DSpace
+# (Archived) Dockerized DSpace
+
+**IMPORTANT**: This repository is not developed anymore. When I started this project I thought I would
+maintain it even though I didn't have to work with DSpace anymore. It is clear now that I have to focus
+on other projects. I didn't hav time to update this repository for years and it is not likely that I 
+will have in the future.
+
+
 
 Running DSpace inside docker containers can be tricky. This project helps you to run each webapp in separate containers.
 In fact, you can decide which app you want to install; therefore you can still run each of them in the same container.
